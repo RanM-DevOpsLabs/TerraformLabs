@@ -1,3 +1,4 @@
+![tf](tfnew.jpg)
 # TerraformLabs - Flask Hello World with Terraform
 
 This repository contains a simple Flask "Hello World" application containerized with Docker and deployed using Terraform.
