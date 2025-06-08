@@ -1,0 +1,20 @@
+# Python bytecode and cache (definitely exclude)
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments (exclude - we install fresh in container)
+venv/
+env/
+.venv/
+
+# IDE files (exclude - not needed in container)
+.vscode/
+.idea/
+
+# OS files (exclude)
+.DS_Store
+Thumbs.db
+
+# Git (exclude - not needed in production container)
+.git/ 
