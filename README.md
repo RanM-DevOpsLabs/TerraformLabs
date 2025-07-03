@@ -30,6 +30,27 @@ Initialize Terraform to download required providers and modules:
 ```bash
 terraform init
 ```
+### What happens under the hood:
+
+🔍 Parses Configuration Files
+* Reads all .tf files to identify providers, modules, backends, and required versions.
+
+📦 Downloads Provider Plugins
+* Contacts the Terraform Registry (or a custom provider source).
+* Downloads provider binaries (e.g. hashicorp/aws) to .terraform/providers/.
+
+🔗 Initializes Backend
+* If a backend (e.g., s3, gcs, remote) is defined:
+* Initializes connection (e.g. checks bucket and credentials).
+* May create lock files or state files if they don’t exist.
+* If using local backend, creates terraform.tfstate locally.
+
+📁 Prepares .terraform/ Directory
+* Stores:
+* Provider binaries.
+* Module source code (downloaded from Git, local path, registry, etc.).
+* Backend metadata.
+* Dependency lock file (.terraform.lock.hcl).
 
 ### Step 3: Validate Configuration
 Validate your Terraform configuration files:
@@ -37,12 +58,95 @@ Validate your Terraform configuration files:
 ```bash
 terraform validate
 ```
+### What happens under the hood:
+
+🔍 Parses All .tf Files
+* Uses the internal HCL parser to read and build the configuration structure.
+
+🧠 Validates Schema and Syntax
+* Ensures:
+* Required attributes are present.
+* Data types match.
+* References to variables, resources, locals, etc., are valid.
+
+⚠️ Does Not Contact Provider APIs
+* Purely static validation.
+* No real-world checks (e.g., region existence, API quotas).
+
+### Step 4: Plan
+Creates an execution plan showing what will change:
+
+### What happens under the hood:
+
+📥 Loads State
+* Reads the current state from:
+* terraform.tfstate (local).
+* Remote backend (e.g., S3 with DynamoDB lock).
+
+🔁 Refreshes Resource States
+* Calls each provider’s API to refresh current resource data.
+* Reconciles config with real-world state.
+
+⚙️ Diffs Desired vs Actual
+* Compares:
+  * Configuration (.tf) ← desired
+  * Refreshed state ← current
+* Calculates:
+  * Resources to create, update, or destroy.
+
+🔒 Checks for Drift
+* Drift = difference between real infra and state file.
+
+📝 Outputs a Plan
+* Shows what changes will occur
 
 ### Step 4: Apply Infrastructure
 Deploy the infrastructure and application:
 
 ```bash
 terraform apply
+```
+
+### What happens under the hood:
+
+🔁 Re-evaluates Configuration
+* Parses .tf files again.
+* Re-checks dependencies and order of resources.
+
+📥 Reads & Locks State
+* Loads current state file.
+* Locks it to prevent concurrent modifications (esp. important with remote backends like S3 + DynamoDB).
+
+🔧 Executes Resource Changes
+* Sequentially or in parallel (as DAG) applies changes:
+  * Creates new resources.
+  * Updates changed ones.
+  * Deletes obsolete ones.
+* Uses provider SDKs (e.g. AWS SDK, Azure SDK) to make real API calls.
+
+🪵 Logs Output and Errors
+* Displays live updates.
+* Logs failures per resource.
+
+💾 Writes Updated State
+* Updates terraform.tfstate with new resource states and metadata.
+* Unlocks the state.
+
+### Diagram:
+```bash
+ [ .tf files ]      [ .tfstate ]
+     |                   |
+     v                   v
+     -----> Refresh & lock state
+                    |
+                    v
+            Execute provider APIs
+                    |
+                    v
+         Apply changes to real infra
+                    |
+                    v
+        Write new state & unlock file
 ```
 
 *Note: Terraform will show you a plan of what will be created. Type `yes` when prompted to confirm the deployment.*
