@@ -131,6 +131,32 @@ terraform apply
 💾 Writes Updated State
 * Updates terraform.tfstate with new resource states and metadata.
 * Unlocks the state.
+---
+ℹ️ About the state file:
+<i>State file acts as a storage file for terrafom. If we'll take a look inside we'll see a .json formatted file, and we can recognize the resource that were already created using the `apply` command.</i>
+
+If we'll take a look inside tfstate file, we can two main resources where created: the information about our created docker image:
+1. type: docker_container
+2. type: docker_image
+
+If for example - we'll change the docker image name, and type apply again, terraform we'll comare newly passed paramaters to the tfstate, and see if something needs to change, in this case, it would point that the name will be updated. 
+```json
+{
+      "mode": "managed",
+      "type": "docker_container",
+      "name": "flask_hello_world_container",
+      "provider": "provider[\"registry.terraform.io/kreuzwerker/docker\"]",
+      "instances": [
+       ...
+      ], 
+      "mode": "managed",
+      "type": "docker_image",
+      "name": "flask_hello_world_image",
+      "provider": "provider[\"registry.terraform.io/kreuzwerker/docker\"]",
+      "instances":
+    }
+```
+
 
 ### Diagram:
 ```bash
