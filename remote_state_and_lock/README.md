@@ -158,3 +158,9 @@ docker-compose down -v && docker-compose up -d
 terraform state list
 terraform state show local_file.shared
 ``` 
+
+# A Word About The Lock File (.terraform.lock.hcl)
+- Its a good practice commiting terraform lock file into your repository. 
+- This file locks each provider in a single version that was last installed - so all members working on this projects are aling to it.
+- It is also serves as a record of who committed the version chagne.
+![lockfile](lockfile.png)

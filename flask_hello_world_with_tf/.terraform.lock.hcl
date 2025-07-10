@@ -1,9 +1,11 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
+# this is the provider that was last installed
 provider "registry.terraform.io/kreuzwerker/docker" {
-  version     = "3.0.2"
-  constraints = "~> 3.0.1"
+  version     = "3.0.2" # this is the version of the provider that was last installed
+  constraints = "~> 3.0.1" # this is the version constraint that was last applied
+  # hashes are the sha256 hashes of the provider's source code
   hashes = [
     "h1:XjdpVL61KtTsuPE8swok3GY8A+Bu3TZs8T2DOEpyiXo=",
     "zh:15b0a2b2b563d8d40f62f83057d91acb02cd0096f207488d8b4298a59203d64f",

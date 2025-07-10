@@ -27,4 +27,3 @@ resource "local_file" "shared" {
   content  = "This state is stored remotely!"
   filename = "shared.txt"
 }
-#state/terraform.tfstate
